@@ -20,4 +20,4 @@ const functions = firebase.functions();
 // 	functions.useEmulator("localhost", 5001);
 // }
 
-export {firebaseApp, db, auth, storage, functions };
+export { db, auth, storage, functions };
