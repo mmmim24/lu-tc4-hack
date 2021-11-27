@@ -14,23 +14,12 @@ import { useNavigate } from "react-router";
 const RegisterForm = ({ setUserValid }) => {
 	const [codeSent, setCodeSent] = React.useState();
 	const [phone, setPhone] = React.useState();
-	const [code, setCode] = React.useState();
 	const [otp, setOtp] = React.useState();
-	const [timer, setTimer] = React.useState(30);
-	const [{ user }, action] = useStateValue();
+	const [timer, setTimer] = React.useState(90);
+	const [, action] = useStateValue();
 	const navigate = useNavigate();
 
 	const { Option } = Select;
-
-	useEffect(() => {
-		// window.recaptchaVerifier = new auth.RecaptchaVerifier("sign-in-button", {
-		// 	size: "invisible",
-		// 	callback: (response) => {
-		// 		// reCAPTCHA solved, allow signInWithPhoneNumber.
-		// 		onSignInSubmit();
-		// 	},
-		// });
-	}, []);
 
 	const handleSignIn = (e) => {
 		e.preventDefault();
@@ -108,7 +97,7 @@ const RegisterForm = ({ setUserValid }) => {
 	}, [codeSent]);
 
 	const handleResend = () => {
-		setTimer(30);
+		setTimer(90);
 		timerInit();
 	};
 

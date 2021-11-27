@@ -5,8 +5,22 @@ import {
 	YoutubeOutlined,
 } from "@ant-design/icons";
 import React from "react";
+import { Navigate } from "react-router";
+import { auth } from "../firebase";
+import { useStateValue } from "../state/stateprovider";
 
 const Layout = ({ children }) => {
+	const [{ user }, action] = useStateValue();
+	const handleSignOut = () => {
+		auth.signOut();
+		action({
+			type: "SET_USER",
+			payload: {
+				user: null,
+			},
+		});
+		Navigate("/register");
+	};
 	return (
 		<div>
 			<div className='bg-primary'>
@@ -19,7 +33,7 @@ const Layout = ({ children }) => {
 						<div>Home</div>
 						<div>Categories</div>
 						<div>Best Deals</div>
-						<div>Profile</div>
+						<div onClick={handleSignOut}>Sign Out</div>
 					</div>
 				</div>
 			</div>
