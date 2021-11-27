@@ -66,19 +66,7 @@ const OTPForm = () => {
 					onChange={(e) => setOtp(e.target.value)}
 				/>
 			</div>
-			{/* <div>
-				<div className='flex gap-3'>
-					<Select showArrow={false} value='+880' disabled={true}>
-						<Option value='+880'>+880</Option>
-					</Select>
-					<Input
-						prefix={<MobileOutlined />}
-						onChange={(e) => setPhone(e.target.value)}
-						type='number'
-						placeholder='Phone'
-					/>
-				</div>
-			</div> */}
+
 			<div className='text-xs text-center'>
 				{timer ? (
 					`Resend in ${timer} seconds`
