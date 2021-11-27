@@ -11,7 +11,7 @@ import OTPForm from "../components/OTPForm";
 const Register = () => {
 	const [userValid, setUserValid] = React.useState(false);
 	const [otpValid, setOtpValid] = React.useState(false);
-
+    
 	return (
 		<div className='bg-gray flex flex-col min-w-screen min-h-screen justify-center items-center'>
 			<div className='flex bg-white min-w-content flex-col items-center shadow w-3/12 border-t border-l border-black rounded py-8 px-6'>

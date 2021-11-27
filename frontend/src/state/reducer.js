@@ -1,7 +1,7 @@
 const SET_USER = "SET_USER";
 
 export const initialState = {
-	user: "s",
+	user: null,
 };
 
 const reducer = (state, action) => {

@@ -4,7 +4,8 @@ import {
 	UserOutlined,
 } from "@ant-design/icons";
 import { Button, Input, message } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
+import { auth, firebaseApp } from "../firebase";
 
 const RegisterForm = ({ setUserValid }) => {
 	const [username, setUsername] = React.useState();
@@ -19,6 +20,45 @@ const RegisterForm = ({ setUserValid }) => {
 		}
 		setUserValid(true);
 	};
+
+	useEffect(() => {
+		// window.recaptchaVerifier = new auth.RecaptchaVerifier("sign-in-button", {
+		// 	size: "invisible",
+		// 	callback: (response) => {
+		// 		// reCAPTCHA solved, allow signInWithPhoneNumber.
+		// 		onSignInSubmit();
+		// 	},
+		// });
+	}, []);
+
+	// const handleSignIn = () => {
+	// 	const phoneNumber = "+8801538832303";
+	// 	const appVerifier = window.recaptchaVerifier;
+
+	// 	auth
+	// 		.signInWithPhoneNumber(phoneNumber, appVerifier)
+	// 		.then((confirmationResult) => {
+	// 			// SMS sent. Prompt user to type the code from the message, then sign the
+	// 			// user in with confirmationResult.confirm(code).
+	// 			window.confirmationResult = confirmationResult;
+	// 			console.log(confirmationResult);
+	// 			// ...
+	// 		})
+	// 		.catch((error) => {
+	// 			// Error; SMS not sent
+	// 			// ...
+	// 		});
+	// };
+
+	// useEffect(() => {
+	// 	window.recaptchaVerifier = new auth.RecaptchaVerifier("sign-in-button", {
+	// 		size: "invisible",
+	// 		callback: (response) => {
+	// 			// reCAPTCHA solved, allow signInWithPhoneNumber.
+	// 			handleSignIn();
+	// 		},
+	// 	});
+	// }, []);
 	return (
 		<form onSubmit={handleSubmit} className='flex flex-col gap-3'>
 			{/* <div className='flex gap-4'>
@@ -55,6 +95,7 @@ const RegisterForm = ({ setUserValid }) => {
 			</div>
 			<div className='flex justify-center'>
 				<Button
+					id='submit-form'
 					htmlType='submit'
 					onClick={handleSubmit}
 					icon={<FileProtectOutlined />}
