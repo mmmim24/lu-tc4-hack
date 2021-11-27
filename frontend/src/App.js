@@ -5,6 +5,7 @@ import { auth } from "./firebase";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import Settings from "./pages/Settings";
 import { useStateValue } from "./state/stateprovider";
 import Loader from "./utils/Loader";
 
@@ -33,20 +34,15 @@ function App() {
 					{user ? (
 						<Routes>
 							<Route exact path='/home' element={<Home />} />
+							<Route exact path='/profile/settings' element={<Settings />} />
 							<Route exact path='/profile/view/:id' element={<Profile />} />
-							<Route
-								path='*'
-								element={user ? <NotFound /> : <Navigate to='/login' />}
-							/>
+							<Route path='*' element={<Navigate to='/home' />} />
 						</Routes>
 					) : (
 						<Routes>
 							<Route exact path='/' element={<div>Hello</div>} />
 							<Route exact path='/register' element={<Register />} />
-							<Route
-								path='*'
-								element={user ? <Navigate to='/home' /> : <NotFound />}
-							/>
+							<Route path='*' element={<Navigate to='/register' />} />
 						</Routes>
 					)}
 				</>

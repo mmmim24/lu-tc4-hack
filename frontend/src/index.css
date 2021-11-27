@@ -57,3 +57,9 @@ code {
 .bg-primary {
 	background-color: var(--indigo);
 }
+
+.profile_nav {
+	position: absolute;
+	top: 60px;
+	right: 20px;
+}
