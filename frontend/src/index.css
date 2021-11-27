@@ -3,16 +3,57 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200;400;600;800&display=swap");
+
+:root {
+	--white: #ffffffff;
+	--ming: #3c6e71ff;
+	--gray: #d9d9d9ff;
+	--black: #353535ff;
+	--indigo: #284b63ff;
+	--light-gray: #f5f6f9;
+}
+
+* {
+	font-family: "Roboto Slab", serif;
+}
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+		monospace;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.bg-gray {
+	background-color: var(--light-gray);
+}
+
+.shadow {
+	box-shadow: 10px 8px 12px 0px rgba(0, 0, 0, 0.2);
+}
+
+.min-w-content {
+	min-width: 300px;
+}
+
+.text-primary {
+	color: var(--ming);
+}
+
+.bg-primary {
+	background-color: var(--indigo);
 }
