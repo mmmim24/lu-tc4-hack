@@ -16,8 +16,9 @@ const auth = firebase.auth();
 const db = firebaseApp.firestore();
 const storage = firebase.storage();
 const functions = firebase.functions();
-// if (location.hostname === "localhost") {
-// 	functions.useEmulator("localhost", 5001);
-// }
+if (window.location.hostname === "localhost") {
+	// functions.useEmulator("localhost", 5001);
+	// storage.useEmulator("localhost", 5002);
+}
 
 export { db, auth, storage, functions };
