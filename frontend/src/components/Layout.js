@@ -32,8 +32,7 @@ const Layout = ({ children }) => {
 			<div className='bg-primary'>
 				<div className='px-12 py-2 flex items-center justify-between text-white'>
 					<div>
-						<div>DEAL</div>
-						<div>.COM</div>
+						<img src='img/deal-logo-white.png' alt='deal.com' height='70px' width='70px' />
 					</div>
 					<div className='flex items-center gap-12'>
 						<div>Home</div>
@@ -83,7 +82,10 @@ const Layout = ({ children }) => {
 					</div>
 				</div>
 				<div className='flex flex-col gap-2'>
-					<div>DEAL.com</div>
+					<div>
+							<img src='img/deal-logo-white.png' alt='deal.com' height='35px' width='35px' />
+					</div>
+					{/* <div>DEAL.com</div> */}
 					<div className='text-xs text-gray-400'>
 						Founded in 2021, deal.com aim to be No.1 <br />
 						trusted site for buying and selling brand new/used <br /> products
