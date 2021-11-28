@@ -24,6 +24,7 @@ app3.use(cors({ origin: true }))
 
 const SSLCommerzPayment = require('sslcommerz-lts');
 const { response } = require("express");
+const { db } = require("../src/firebase");
 // 'store_id': 'milit612a94857784c', 
 //     'store_pass': 'milit612a94857784c@ssl', 
     
@@ -42,9 +43,9 @@ app3.get('/init', async (req, res) => {
         total_amount: 100,
         currency: 'BDT',
         tran_id: tran_id, // use unique tran_id for each api call
-        success_url: 'http://localhost:3030/success',
-        fail_url: 'http://localhost:3030/fail',
-        cancel_url: 'http://localhost:3030/cancel',
+        success_url: 'http://localhost:3030/success?tran_id'+tran_id,
+        fail_url: 'http://localhost:3030/fail?tran_id'+tran_id,
+        cancel_url: 'http://localhost:3030/cancel?tran_id'+tran_id,
         ipn_url: 'http://localhost:5002/practice-management-system/us-central1/api3',
         shipping_method: 'Courier',
         product_name: 'Computer.',
@@ -75,9 +76,10 @@ app3.get('/init', async (req, res) => {
     sslcz.init(data).then( apiResponse => {
         console.log('Redirecting to: ', apiResponse["GatewayPageURL"])
     
-        response.send(
+        res.send(
             "GatewayPageURL" + apiResponse["GatewayPageURL"]
         )
+
     } )
     // } catch(e) {
         // console.log(e)
@@ -87,18 +89,33 @@ app3.get('/init', async (req, res) => {
 })
 
 
-app3.get("*", async (request, response) => {
-    try {
-        const db = admin.firestore();
-        const gg = await db.collection("users").get()
-        console.log(gg.docs.length);
-        response.send(
-            "asdbahsbdasgd"
-        )
-    }catch(e){
-        console.log(e)
+
+app3.post("*", async (request, response) => {
+    // console.log(request);
+    const val_id = request.body.val_id;
+    const tran_id = request.body.tran_id;
+    const amount = request.body.amount;
+    const db = admin.firestore();
+
+    const tranSnap = await db.collection("transactions")
+        .where("tran_id", "==", tran_id)
+        .get()
+
+    if( tranSnap.docs.length == 1 && tranSnap.docs[0].data().amount == amount ) {
+        db.collection("transactions")
+        .where("tran_id", "==", tran_id)
+        .get()
+        .then( docs => {
+            db.collection("transactions")
+            .doc(docs.docs[0].id)
+            .update({
+                status: "success",
+            })
+        } )
     }
+    
 })
+
 
 
 // not as clean, but a better endpoint to consume

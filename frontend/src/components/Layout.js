@@ -5,12 +5,14 @@ import {
 	UserOutlined,
 	YoutubeOutlined,
 } from "@ant-design/icons";
-import { Avatar } from "antd";
+import { Avatar, Button } from "antd";
 import React from "react";
 import { Navigate } from "react-router";
 import { auth } from "../firebase";
 import { useStateValue } from "../state/stateprovider";
 import { useNavigate } from "react-router-dom";
+import logo from "./img/deal-logo-white.png";
+import NoticeBoard from "./NoticeBoard";
 
 const Layout = ({ children }) => {
 	const [{ user }, action] = useStateValue();
@@ -32,18 +34,23 @@ const Layout = ({ children }) => {
 			<div className='bg-primary'>
 				<div className='px-12 py-2 flex items-center justify-between text-white'>
 					<div>
-						<div>DEAL</div>
-						<div>.COM</div>
+						<img src={logo} alt='deal.com' height='70px' width='70px' />
 					</div>
 					<div className='flex items-center gap-12'>
 						<div>Home</div>
 						<div>Categories</div>
-						<div>Best Deals</div>
+						<Button type='primary' onClick={() => navigate("/product/add")}>
+							Post a Deal
+						</Button>
+						<div>
+							<NoticeBoard />
+						</div>
 						<Avatar
 							className='cursor-pointer'
 							onClick={() => setShow(!show)}
 							icon={<UserOutlined />}
 						/>
+
 						<div
 							className={`${
 								show ? "flex" : "hidden"
@@ -83,7 +90,10 @@ const Layout = ({ children }) => {
 					</div>
 				</div>
 				<div className='flex flex-col gap-2'>
-					<div>DEAL.com</div>
+					<div>
+						<img src={logo} alt='deal.com' height='35px' width='35px' />
+					</div>
+					{/* <div>DEAL.com</div> */}
 					<div className='text-xs text-gray-400'>
 						Founded in 2021, deal.com aim to be No.1 <br />
 						trusted site for buying and selling brand new/used <br /> products

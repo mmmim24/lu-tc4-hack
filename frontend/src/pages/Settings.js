@@ -2,6 +2,7 @@ import { Tabs } from "antd";
 import React from "react";
 import Layout from "../components/Layout";
 import ProfileSettings from "../components/ProfileSettings";
+import Verification from "../components/Verification";
 
 const { TabPane } = Tabs;
 
@@ -14,8 +15,8 @@ const Settings = () => {
 						<TabPane tab='Profile' key='1'>
 							<ProfileSettings />
 						</TabPane>
-						<TabPane tab='Wishlist' key='2'>
-							{/* <Sold /> */}
+						<TabPane tab='Verification' key='2'>
+							<Verification />
 						</TabPane>
 						<TabPane tab='Account' key='3'>
 							{/* <Sold /> */}
