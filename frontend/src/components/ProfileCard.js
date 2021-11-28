@@ -6,7 +6,8 @@ import { useStateValue } from "../state/stateprovider";
 
 const ProfileCard = () => {
 	const [user, setUser] = useState(null);
-	const [ {user:currentUser} ] = useStateValue();
+	const [isValid, setIsValid] = useState(false);
+	const [{ user: currentUser }] = useStateValue();
 	useEffect(() => {
 		const fetch = async () => {
 			const doc = await db
@@ -19,28 +20,47 @@ const ProfileCard = () => {
 	}, []);
 	console.log(window.location.pathname.split("/")[3]);
 
-	const handleRatingChange = async rating => {
+	const handleRatingChange = async (rating) => {
 		// const ratingSnap = await db.collection("users")
 		// 	.doc(user)
 		// 	.collection("rating")
 		// 	.doc(currentUser.id)
 		// 	.get()
 
-		const ratingRef = db.collection("users")
+		const ratingRef = db
+			.collection("users")
 			.doc(user.id)
 			.collection("rating")
-			.doc(currentUser.id)
+			.doc(currentUser.id);
 
 		// if(ratingSnap.exists) {
 		// 	ratingRef.update({
 		// 		rating: rating
 		// 	})
 		// }else {
-			await ratingRef.set({
-				rating: rating
-			})
+		await ratingRef.set({
+			rating: rating,
+		});
 		// }
-	}
+	};
+
+	useEffect(() => {
+		if (!currentUser || !user) return;
+		const checkValidity = async () => {
+			db.collection("orders")
+				.where("sellerId", "==", user.id)
+				.where("buyerId", "==", currentUser.id)
+				.get()
+				.then((snap) => {
+					if (snap.empty) {
+						setIsValid(false);
+					} else {
+						setIsValid(true);
+					}
+				});
+		};
+		currentUser.id !== user.id && checkValidity();
+	}, [user, currentUser]);
 
 	return (
 		<div className='flex mt-14 flex-col bg-gray-200 rounded px-4 py-5 items-center'>
@@ -64,10 +84,17 @@ const ProfileCard = () => {
 					Message
 				</Button>
 			</div>
-			<div className="w-full px-8">
-				{ currentUser.id != user &&  <div>
-					<Slider defaultValue={0} min={-5} max={5} onAfterChange={handleRatingChange} />
-				</div>  }
+			<div className='w-full px-8'>
+				{currentUser?.id !== user?.id && (
+					<div>
+						<Slider
+							defaultValue={0}
+							min={-5}
+							max={5}
+							onAfterChange={handleRatingChange}
+						/>
+					</div>
+				)}
 			</div>
 			<div className='flex gap-5'>
 				<div className='text-right'>
@@ -81,6 +108,7 @@ const ProfileCard = () => {
 					<div className='font-bold text-primary'>{1}</div>
 				</div>
 			</div>
+			{isValid && <div className='text-xl mt-5'>Review Section</div>}
 		</div>
 	);
 };
