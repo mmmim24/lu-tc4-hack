@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import NotFound from "./components/NotFound";
-import { auth } from "./firebase";
+import { auth, db } from "./firebase";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Products from "./pages/products";
 import Product from "./pages/product";
-import AddProduct from './pages/add_product'
+import AddProduct from "./pages/add_product";
 import Settings from "./pages/Settings";
 import { useStateValue } from "./state/stateprovider";
 import Loader from "./utils/Loader";
@@ -17,14 +17,17 @@ function App() {
 	const [{ user }, action] = useStateValue();
 	console.log(auth.currentUser);
 	useEffect(() => {
-		auth.onAuthStateChanged((user) => {
-			user &&
+		auth.onAuthStateChanged(async (u) => {
+			if (u) {
+				const doc = await db.collection("users").where("id", "==", u.uid).get();
+
 				action({
 					type: "SET_USER",
 					payload: {
-						user: user,
+						user: doc.docs[0].data(),
 					},
 				});
+			}
 		});
 	}, []);
 
@@ -36,10 +39,9 @@ function App() {
 				<>
 					{user ? (
 						<Routes>
-							<Route exact path='/home' element={<Home />} />
 							<Route exact path='/profile/settings' element={<Settings />} />
 							<Route exact path='/profile/view/:id' element={<Profile />} />
-							<Route exact path='/products' element={<Products />} />
+							<Route exact path='/home' element={<Products />} />
 							<Route exact path='/product/:id' element={<Product />} />
 							<Route exact path='/product/add' element={<AddProduct />} />
 							{/* <Route path='*' element={<Navigate to='/home' />} /> */}

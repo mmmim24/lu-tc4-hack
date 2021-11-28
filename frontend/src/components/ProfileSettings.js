@@ -23,7 +23,7 @@ const ProfileSettings = () => {
 
 	useEffect(() => {
 		db.collection("users")
-			.doc(user.uid)
+			.doc(user.id)
 			.onSnapshot((doc) => {
 				console.log(doc.data());
 				// form.setFieldsValue(doc.data());
@@ -70,7 +70,7 @@ const ProfileSettings = () => {
 						<label> Phone Number </label>
 						<Input
 							value={values?.phone}
-							placeholder={user.phoneNumber}
+							placeholder={auth.currentUser?.phoneNumber}
 							disabled
 							type='number'
 						/>{" "}
@@ -106,7 +106,7 @@ const ProfileSettings = () => {
 					<div className='flex flex-col gap-2 items-center'>
 						<Avatar icon={<UserOutlined />} size={100} src={user.photoURL} />
 						<div className='tc'>
-							{values.verified ? "Verified" : "Not verified"}
+							{values?.verified ? "Verified" : "Not verified"}
 						</div>
 						<div className='mt-8 rounded border-black border px-8 py-2'>
 							{values?.premium ? "Premium" : "Free Plan"}
