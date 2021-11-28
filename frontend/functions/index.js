@@ -99,7 +99,6 @@ app3.get('/init', async (req, res) => {
 })
 
 
-
 app3.post("*", async (request, response) => {
     // console.log(request);
     const val_id = request.body.val_id;

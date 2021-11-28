@@ -1,13 +1,26 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { db } from "../firebase";
 
 const ProfileCard = () => {
+	const [user, setUser] = useState(null);
+	useEffect(() => {
+		const fetch = async () => {
+			const doc = await db
+				.collection("users")
+				.doc(window.location.pathname.split("/")[3])
+				.get();
+			setUser(doc.data());
+		};
+		fetch();
+	}, []);
+	console.log(window.location.pathname.split("/")[3]);
 	return (
 		<div className='flex mt-14 flex-col bg-gray-200 rounded px-4 py-5 items-center'>
 			<Avatar size={98} icon={<UserOutlined />} />
-			<div className='mt-4 mb-2 text-2xl'> UserName </div>
-			<div className='mt-2 text-xs mb-2'> Sylhet, Bangladesh </div>
+			<div className='mt-4 mb-2 text-2xl'> {user?.name} </div>
+			<div className='mt-2 text-xs mb-2'> {user?.address} </div>
 			<div
 				style={{
 					maxWidth: "200px",

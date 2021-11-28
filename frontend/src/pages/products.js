@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { db } from "../firebase";
 import { Button, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { getGatewayURL } from "../utils/payment";
+import { functions } from "../firebase";
 
 const Home = () => {
 	const [allProducts, setAllProducts] = React.useState([]);
@@ -34,6 +34,24 @@ const Home = () => {
 		setProducts(productsArray);
 		
 	}, []);
+    useEffect( async () => {
+        const productsSnap = await db.collection("products").get()
+        const productsArray = await Promise.all(productsSnap.docs.map( async doc => {
+            const product = doc.data()
+            const uid = product.user;
+            const user = await db.collection("users").doc(uid).get()
+            return {
+                id: doc.id,
+                ...product,
+                user: user.data()
+            }
+        }))
+        setProducts(productsArray)
+
+        // functions.getGatewayURL();
+
+        console.log(productsArray)
+    }, [] )
 
 	const handleSearch = (e) => {
 		e.preventDefault();

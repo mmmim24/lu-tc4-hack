@@ -26,7 +26,7 @@ const ForSale = () => {
 	}, []);
 	console.log(products);
 	return (
-		<div className='flex flex-wrap'>
+		<div className='flex flex-wrap gap-6'>
 			{products.map((p) => (
 				<div style={{ minWidth: "200px" }}>
 					<ProductCard product={p} />

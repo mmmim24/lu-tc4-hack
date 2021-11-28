@@ -42,7 +42,7 @@ const ProfileSettings = () => {
 	console.log(values);
 	const handleSubmit = () => {
 		db.collection("users")
-			.doc(user.uid)
+			.doc(user.id)
 			.update(values)
 			.then(() => {
 				message.success("Profile Updated");

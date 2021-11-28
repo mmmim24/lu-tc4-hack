@@ -78,7 +78,7 @@ const RegisterForm = ({ setUserValid }) => {
 									user: snapshot.data(),
 								},
 							});
-							navigate("/home");
+							navigate("/");
 						} else {
 							const data = {
 								id: user.uid,
@@ -103,7 +103,7 @@ const RegisterForm = ({ setUserValid }) => {
 											user: data,
 										},
 									});
-									navigate("/home");
+									navigate("/");
 								})
 								.catch((error) => {
 									console.log(error);
@@ -168,7 +168,7 @@ const RegisterForm = ({ setUserValid }) => {
 					type='primary'
 					className=' mt-4 w-4/12 center min-w-min'
 				>
-					Register
+					LogIn
 				</Button>
 			</div>
 		</form>

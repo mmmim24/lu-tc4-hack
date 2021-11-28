@@ -24,7 +24,8 @@
     "yarn": "^1.22.17"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "nodemon -w craco.config.js --exec \"craco start\"",
+    "cstart": "craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
