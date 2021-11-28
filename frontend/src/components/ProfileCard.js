@@ -65,7 +65,7 @@ const ProfileCard = () => {
 				</Button>
 			</div>
 			<div className="w-full px-8">
-				{ currentUser.id != user && <div>
+				{ currentUser.id != user &&  <div>
 					<Slider defaultValue={0} min={-5} max={5} onAfterChange={handleRatingChange} />
 				</div>  }
 			</div>

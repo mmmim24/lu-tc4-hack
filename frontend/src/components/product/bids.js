@@ -55,14 +55,22 @@ export default (props) => {
 			const selected_bid = selected_bid_snap.docs[0].data();
 			console.log(selected_bid);
 			set_current_user_bid({
-				selected_bid: selected_bid,
+				selected_bid: {
+					...selected_bid,
+					id: selected_bid_snap.docs[0].id
+				},
 			});
+			// console.log(current_user_bid.selected_bid);
+			// console.log(product.accepted_bid_id);
 			if (
 				product.accepted_bid_id &&
 				selected_bid.id == product.accepted_bid_id
 			) {
 				set_current_user_bid({
-					selected_bid: selected_bid,
+					selected_bid: {
+						...selected_bid,
+						id: selected_bid_snap.docs[0].id
+					},
 					accepted: true,
 				});
 			}
@@ -91,6 +99,15 @@ export default (props) => {
 			buyerId: user.id,
 			productId: product.id,
 		});
+
+
+		await db
+			.collection("products")
+			.doc(product.id)
+			.update({
+				sold: true,
+			})
+
 		console.log(current_user_bid.selected_bid.bid);
 		message.success("Purchase Successful");
 		await db
@@ -114,6 +131,7 @@ export default (props) => {
 				is_bidding_off: true,
 				accepted_bid_id: bidId,
 			});
+		
 
 		await db
 			.collection("users")
@@ -232,109 +250,117 @@ export default (props) => {
 		message.success("Bid Deleted");
 	};
 
-	return current_user_bid.accepted ? (
-		<Button className='mt-8' onClick={acceptOffer}>
-			{" "}
-			Buy Now for {current_user_bid.selected_bid.bid}{" "}
-		</Button>
-	) : props.product.is_bidding_off ? (
-		<div className='flex mt-4 items-center justify-center flex-col gap-5'>
-			<div> Bidding is currently closed for this product </div>
-			<br />
-			{current_user_owner ? (
-				<Button type='primary' onClick={turn_on_bidding}>
+	return (
+		product.sold ? 
+			<div className=" flex mt-4 items-center justify-center flex-col gap-5">
+				<div className="w-64 bg-red-500 text-white rounded-lg flex justify-center py-4">Product sold</div> 
+			</div>
+		: current_user_bid.accepted ? (
+			<div className="flex mt-4 items-center justify-center flex-col gap-5">
+				<Button className='mt-8' onClick={acceptOffer}>
 					{" "}
-					Turn on bidding{" "}
+					Buy Now for {current_user_bid.selected_bid.bid}{" "}
 				</Button>
-			) : (
-				<></>
-			)}
-		</div>
-	) : current_user_owner ? (
-		<div className='flex mt-8 flex-col items-center justify-center'>
-			<Button
-				type='danger'
-				className='rounded-full my-4 py-1 w-1/4'
-				onClick={turn_off_bidding}
-			>
-				Turn off bidding
-			</Button>
-			<Table className='w-full' dataSource={bids}>
-				<Column
-					title='Name'
-					dataIndex={"username"}
-					key='name'
-					render={(d, record) => (
-						<Link to={`/profile/view/${record.user}`}>{d}</Link>
-					)}
-				/>
-				<Column title='Bid' dataIndex={"bid"} key='bid' />
-				<Column
-					title='Actions'
-					render={(_, record) => {
-						return (
-							<div className='flex gap-4'>
-								<Button
-									className='rounded'
-									type='primary'
-									onClick={() => acceptBid(record.id)}
-								>
-									Accept
-								</Button>
-								{user?.premium && (
+			</div>
+		) : props.product.is_bidding_off ? (
+			<div className='flex mt-4 items-center justify-center flex-col gap-5'>
+				<div> Bidding is currently closed for this product </div>
+				<br />
+				{current_user_owner ? (
+					<Button type='primary' onClick={turn_on_bidding}>
+						{" "}
+						Turn on bidding{" "}
+					</Button>
+				) : (
+					<></>
+				)}
+			</div>
+		) : current_user_owner ? (
+			<div className='flex mt-8 flex-col items-center justify-center'>
+				<Button
+					type='danger'
+					className='rounded-full my-4 py-1 w-1/4'
+					onClick={turn_off_bidding}
+				>
+					Turn off bidding
+				</Button>
+				<Table className='w-full' dataSource={bids}>
+					<Column
+						title='Name'
+						dataIndex={"username"}
+						key='name'
+						render={(d, record) => (
+							<Link to={`/profile/view/${record.user}`}>{d}</Link>
+						)}
+					/>
+					<Column title='Bid' dataIndex={"bid"} key='bid' />
+					<Column
+						title='Actions'
+						render={(_, record) => {
+							return (
+								<div className='flex gap-4'>
 									<Button
 										className='rounded'
-										type='danger'
-										onClick={() => handleDelete(record.id)}
+										type='primary'
+										onClick={() => acceptBid(record.id)}
 									>
-										Reject
+										Accept
 									</Button>
-								)}
-							</div>
-						);
+									{user?.premium && (
+										<Button
+											className='rounded'
+											type='danger'
+											onClick={() => handleDelete(record.id)}
+										>
+											Reject
+										</Button>
+									)}
+								</div>
+							);
+						}}
+					/>
+				</Table>
+			</div>
+		) : (
+			<div className='flex mt-8 flex-col justify-center items-center gap-5'>
+				<div>
+					{current_user_bid.selected_bid.bid != -1 && (
+						<h1> your current bid is {current_user_bid.selected_bid.bid} </h1>
+					)}
+					{current_user_bid.selected_bid.bid == -1 ? "Submit" : "Re-Submit"} your
+					bid. minimum bid is {product.minimum_bid}
+				</div>
+				{user?.premium && lowRange && highRange && (
+					<div className='flex p-2 rounded gap-2 bg-primary text-white items-center'>
+						<StarOutlined />
+						<div>
+							<span className='font-bold '>
+								{lowRange} - {highRange}
+							</span>{" "}
+							BDT has a higher probability to win
+						</div>
+						<StarOutlined />
+					</div>
+				)}
+				<Input
+					className='w-1/4'
+					type='number'
+					onChange={(e) => {
+						set_current_user_bid({
+							...current_user_bid,
+							selected_bid: {
+								...current_user_bid.selected_bid,
+								user: userId,
+								time: new Date(),
+								bid: e.target.value,
+							},
+						});
 					}}
 				/>
-			</Table>
-		</div>
-	) : (
-		<div className='flex mt-8 flex-col justify-center items-center gap-5'>
-			<div>
-				{current_user_bid.selected_bid.bid != -1 && (
-					<h1> your current bid is {current_user_bid.selected_bid.bid} </h1>
-				)}
-				{current_user_bid.selected_bid.bid == -1 ? "Submit" : "Re-Submit"} your
-				bid. minimum bid is {product.minimum_bid}
+				<Button onClick={handleSubmit} type='primary'>
+					Confirm
+				</Button>
 			</div>
-			{user?.premium && lowRange && highRange && (
-				<div className='flex p-2 rounded gap-2 bg-primary text-white items-center'>
-					<StarOutlined />
-					<div>
-						<span className='font-bold '>
-							{lowRange} - {highRange}
-						</span>{" "}
-						BDT has a higher probability to win
-					</div>
-					<StarOutlined />
-				</div>
-			)}
-			<Input
-				className='w-1/4'
-				type='number'
-				onChange={(e) => {
-					set_current_user_bid({
-						...current_user_bid,
-						selected_bid: {
-							...current_user_bid.selected_bid,
-							user: userId,
-							time: new Date(),
-							bid: e.target.value,
-						},
-					});
-				}}
-			/>
-			<Button onClick={handleSubmit} type='primary'>
-				Confirm
-			</Button>
-		</div>
+		)
 	);
 };
