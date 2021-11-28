@@ -4,6 +4,7 @@ import ProfileCard from "../components/ProfileCard";
 import { Tabs } from "antd";
 import ForSale from "../components/ForSale";
 import Sold from "../components/Sold";
+import Reviews from "../components/Reviews";
 
 const { TabPane } = Tabs;
 
@@ -19,6 +20,9 @@ const Profile = () => {
 						</TabPane>
 						<TabPane tab='Sold' key='2'>
 							<Sold />
+						</TabPane>
+						<TabPane tab='Reviews' key='3'>
+							<Reviews />
 						</TabPane>
 						{/* <TabPane tab='Tab 3' key='3'>
 						Content of Tab Pane 3
