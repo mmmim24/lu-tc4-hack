@@ -35,7 +35,7 @@ const ProfileCard = () => {
 	}, []);
 	console.log(window.location.pathname.split("/")[3]);
 
-	const [reviewState, setReviewState] = useState({});
+	const [reviewState, setReviewState] = useState({rating: 0});
 	const handleReview = async () => {
 		// console.log(reviewState);
 		await db
