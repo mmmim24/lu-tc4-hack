@@ -18,9 +18,8 @@ const Register = () => {
 				<h2 className='text-3xl font-bold mb-8'>Deal.com</h2>
 				<div>
 					<h2 className='text-xl text-primary'>Sign up</h2>
-					<p className='text-gray-300 mb-8 text-xs'>
-						Don't have an account? Create your account, it takes less than a
-						minute
+					<p className='text-gray-400 mb-8 text-xs'>
+						Don't have an account? Just enter your phone number and your account is created!
 					</p>
 				</div>
 				{!userValid ? (
@@ -28,10 +27,10 @@ const Register = () => {
 				) : (
 					<OTPForm />
 				)}
-				<p className='mt-5 text-xs'>
+				{/* <p className='mt-5 text-xs'>
 					Already Have an account?{" "}
 					<span className='underline cursor-pointer'>Sign In </span>
-				</p>
+				</p> */}
 			</div>
 		</div>
 	);

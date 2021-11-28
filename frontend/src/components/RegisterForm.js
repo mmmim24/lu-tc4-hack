@@ -168,7 +168,7 @@ const RegisterForm = ({ setUserValid }) => {
 					type='primary'
 					className=' mt-4 w-4/12 center min-w-min'
 				>
-					Register
+					LogIn
 				</Button>
 			</div>
 		</form>
