@@ -2,6 +2,7 @@ import { Button, Input, message, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { useStateValue } from "../../state/stateprovider";
 import { auth, db } from "../../firebase";
+import { Link } from "react-router-dom";
 
 const { Column } = Table;
 
@@ -27,7 +28,11 @@ export default (props) => {
 				.collection("bids")
 				.orderBy("bid", "desc")
 				.get();
-			setBids(bidsSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+			const bids = await Promise.all( bidsSnap.docs.map( async (doc) => ({
+				...doc.data(),
+				username: (await db.collection("users").doc(doc.data().user).get()).data().name
+			})))
+			setBids(bids);
 		} else {
 			// if( product.is_bidding_off )
 			//     return;
@@ -170,9 +175,9 @@ export default (props) => {
 	}
 
 
-	// useEffect(async () => {
-		
-	// }, [current_user_bid]);
+	useEffect(() => {
+		console.log(bids);
+	}, [bids]);
 
 	return current_user_bid.accepted ? (
 		<Button onClick={acceptOffer}>
@@ -193,7 +198,9 @@ export default (props) => {
 		<div className="flex flex-col items-center justify-center">
 			<Button type="danger" className="rounded-full my-4 py-1 w-1/4" onClick={turn_off_bidding}>Turn off bidding</Button>
 			<Table className="w-full" dataSource={bids}>
-				<Column title='Name' dataIndex={"user"} key='name' />
+				<Column title='Name' dataIndex={"username"} key='name' render={ (d, record) => 
+					<Link to={`/profile/view/${record.user}`}>{d}</Link>
+				} />
 				<Column title='Bid' dataIndex={"bid"} key='bid' />
 				<Column
 					title='Actions'
