@@ -20,7 +20,7 @@ const OTPForm = () => {
 				},
 			},
 		});
-		navigate("/home");
+		navigate("/");
 	};
 	const timerInit = () => {
 		const tm = setInterval(() => {

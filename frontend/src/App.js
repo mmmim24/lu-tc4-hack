@@ -49,16 +49,15 @@ function App() {
 				<>
 					{user ? (
 						<Routes>
+							<Route exact path='/' element={<Products />} />
 							<Route exact path='/profile/settings' element={<Settings />} />
 							<Route exact path='/profile/view/:id' element={<Profile />} />
-							<Route exact path='/home' element={<Products />} />
 							<Route exact path='/product/:id' element={<Product />} />
 							<Route exact path='/product/add' element={<AddProduct />} />
 							{/* <Route path='*' element={<Navigate to='/home' />} /> */}
 						</Routes>
 					) : (
 						<Routes>
-							<Route exact path='/' element={<div>Hello</div>} />
 							<Route exact path='/register' element={<Register />} />
 							{/* <Route path='*' element={<Navigate to='/register' />} /> */}
 						</Routes>

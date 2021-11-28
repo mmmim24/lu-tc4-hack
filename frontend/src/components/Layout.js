@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
 				<div className='px-12 py-2 flex items-center justify-between text-white'>
 					<div>
 						<img
-							onClick={() => navigate("/home")}
+							onClick={() => navigate("/")}
 							src={logo}
 							alt='deal.com'
 							height='70px'
@@ -44,7 +44,7 @@ const Layout = ({ children }) => {
 						/>
 					</div>
 					<div className='flex items-center gap-12'>
-						<Link to='/home'>Home</Link>
+						<Link to='/'>Home</Link>
 						{/* <div>Categories</div> */}
 						<Button type='primary' onClick={() => navigate("/product/add")}>
 							Post a Deal
