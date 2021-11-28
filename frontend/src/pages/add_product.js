@@ -17,7 +17,8 @@ export default () => {
 	// user can drop the product at our warehouse or request us to collect it from  him/her
 	// fremium user posts will expire within 5days premium users  will expire within 1 year
 
-	const userId = useStateValue()[0].user.uid;
+	const [ {user} ] = useStateValue()
+	const userId = user.id;
 	const navigate = useNavigate();
 
 	// window.user = user[0];

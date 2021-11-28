@@ -216,7 +216,7 @@ export default (props) => {
 	}, [user]);
 
 	return current_user_bid.accepted ? (
-		<Button onClick={acceptOffer}>
+		<Button className="mt-8" onClick={acceptOffer}>
 			{" "}
 			Buy Now for {current_user_bid.selected_bid.bid}{" "}
 		</Button>
@@ -234,7 +234,7 @@ export default (props) => {
 			)}
 		</div>
 	) : current_user_owner ? (
-		<div className='flex flex-col items-center justify-center'>
+		<div className='flex mt-8 flex-col items-center justify-center'>
 			<Button
 				type='danger'
 				className='rounded-full my-4 py-1 w-1/4'
@@ -269,10 +269,12 @@ export default (props) => {
 			</Table>
 		</div>
 	) : (
-		<div className='flex flex-col justify-center items-center gap-5'>
+		<div className='flex mt-8 flex-col justify-center items-center gap-5'>
 			<div>
+				{ current_user_bid.selected_bid.bid != -1
+				&& <h1> your current bid is { current_user_bid.selected_bid.bid } </h1>}
 				{current_user_bid.selected_bid.bid == -1 ? "Submit" : "Re-Submit"} your
-				bid
+				bid. minimum bid is { product.minimum_bid }
 			</div>
 			{user?.premium && lowRange && highRange && (
 				<div className='flex p-2 rounded gap-2 bg-primary text-white items-center'>

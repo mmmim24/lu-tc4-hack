@@ -2,7 +2,9 @@ import { Spin } from "antd";
 import React from "react";
 
 const Loader = ({ loading, children }) => {
-	return <Spin spinning={loading}>{children}</Spin>;
+	return <div className="h-sceen w-screen">
+	<Spin className="w-full h-full" spinning={loading}>{children}</Spin>
+	</div>
 };
 
 export default Loader;

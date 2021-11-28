@@ -43,7 +43,7 @@ app3.get('/init', async (req, res) => {
         success_url: 'http://localhost:3030/success?tran_id'+tran_id,
         fail_url: 'http://localhost:3030/fail?tran_id'+tran_id,
         cancel_url: 'http://localhost:3030/cancel?tran_id'+tran_id,
-        ipn_url: 'http://pretty-grasshopper-26.loca.lt/practice-management-system/us-central1/api3',
+        ipn_url: 'https://thin-snail-82.loca.lt/practice-management-system/us-central1/api3',
         shipping_method: 'Courier',
         product_name: 'Computer.',
         product_category: 'Electronic',
@@ -106,6 +106,7 @@ app3.post("*", async (request, response) => {
     const amount = request.body.amount;
     const db = admin.firestore();
 
+    console.log(tran_id, amount)
 
     const tranRef = await db.collection("transactions").doc(tran_id).get()
 
