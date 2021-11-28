@@ -1,10 +1,12 @@
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Button } from "antd";
+import { Avatar, Button, Slider } from "antd";
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
+import { useStateValue } from "../state/stateprovider";
 
 const ProfileCard = () => {
 	const [user, setUser] = useState(null);
+	const [ {user:currentUser} ] = useStateValue();
 	useEffect(() => {
 		const fetch = async () => {
 			const doc = await db
@@ -16,6 +18,30 @@ const ProfileCard = () => {
 		fetch();
 	}, []);
 	console.log(window.location.pathname.split("/")[3]);
+
+	const handleRatingChange = async rating => {
+		// const ratingSnap = await db.collection("users")
+		// 	.doc(user)
+		// 	.collection("rating")
+		// 	.doc(currentUser.id)
+		// 	.get()
+
+		const ratingRef = db.collection("users")
+			.doc(user.id)
+			.collection("rating")
+			.doc(currentUser.id)
+
+		// if(ratingSnap.exists) {
+		// 	ratingRef.update({
+		// 		rating: rating
+		// 	})
+		// }else {
+			await ratingRef.set({
+				rating: rating
+			})
+		// }
+	}
+
 	return (
 		<div className='flex mt-14 flex-col bg-gray-200 rounded px-4 py-5 items-center'>
 			<Avatar size={98} icon={<UserOutlined />} />
@@ -37,6 +63,11 @@ const ProfileCard = () => {
 				<Button type='primary' shape='round'>
 					Message
 				</Button>
+			</div>
+			<div className="w-full px-8">
+				{ currentUser.id != user && <div>
+					<Slider defaultValue={0} min={-5} max={5} onAfterChange={handleRatingChange} />
+				</div>  }
 			</div>
 			<div className='flex gap-5'>
 				<div className='text-right'>

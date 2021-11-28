@@ -61,7 +61,7 @@ const Layout = ({ children }) => {
 						<div
 							className={`${
 								show ? "flex" : "hidden"
-							} flex-col gap-2 bg-white text-black shadow px-8 py-4 border-1 rounded profile_nav`}
+							} z-40 flex-col gap-2 bg-white text-black shadow px-8 py-4 border-1 rounded profile_nav`}
 						>
 							<div className='text-primary text-xs'>
 								<span className='text-xl'>

@@ -33,6 +33,7 @@ export default (props) => {
 				.get();
 			const bids = await Promise.all(
 				bidsSnap.docs.map(async (doc) => ({
+					id: doc.id,
 					...doc.data(),
 					username: (
 						await db.collection("users").doc(doc.data().user).get()
@@ -84,6 +85,13 @@ export default (props) => {
 					parseFloat(user.deposit) -
 					parseFloat(current_user_bid.selected_bid.bid),
 			});
+		await db
+			.collection("orders")
+			.add({
+				sellerId: product.seller.id,
+				buyerId: user.id,
+				productId: product.id 
+			})
 		console.log(current_user_bid.selected_bid.bid);
 		message.success("Purchase Successful");
 		await db
@@ -102,7 +110,7 @@ export default (props) => {
 		await db
 			.collection("products")
 			.doc(product.id)
-			.set({
+			.update({
 				...product,
 				is_bidding_off: true,
 				accepted_bid_id: bidId,
