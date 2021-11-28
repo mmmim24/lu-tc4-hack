@@ -20,13 +20,13 @@ export default (props) => {
 	useEffect(async () => {
 		if (product.seller.id == userId) {
 			set_current_user_owner(true);
-			const bidsSnap = await db
+			const bidsSnaps = await db
 				.collection("products")
 				.doc(product.id)
 				.collection("bids")
 				.orderBy("bid", "desc")
-				.get();
-			setBids(bidsSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+			
+			bidsSnaps.onSnapshot(bidsSnap.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 		} else {
 			// if( product.is_bidding_off )
 			//     return;
