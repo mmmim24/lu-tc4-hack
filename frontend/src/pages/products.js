@@ -48,7 +48,7 @@ const Home = () => {
         }))
         setProducts(productsArray)
 
-        functions.getGatewayURL();
+        // functions.getGatewayURL();
 
         console.log(productsArray)
     }, [] )

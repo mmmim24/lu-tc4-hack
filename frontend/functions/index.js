@@ -43,10 +43,10 @@ exports.getGatewayURL = functions.https.onCall(async (amount) => {
         total_amount: amount,
         currency: 'BDT',
         tran_id: tran_id, // use unique tran_id for each api call
-        success_url: 'http://localhost:3030/success?tran_id='+tran_id,
-        fail_url: 'http://localhost:3030/fail?tran_id='+tran_id,
-        cancel_url: 'http://localhost:3030/cancel?tran_id='+tran_id,
-        ipn_url: 'https://friendly-dodo-57.loca.lt/practice-management-system/us-central1/api3',
+        success_url: 'http://localhost:3030/success?tran_id'+tran_id,
+        fail_url: 'http://localhost:3030/fail?tran_id'+tran_id,
+        cancel_url: 'http://localhost:3030/cancel?tran_id'+tran_id,
+        ipn_url: 'http://localhost:5002/practice-management-system/us-central1/api3',
         shipping_method: 'Courier',
         product_name: 'Computer.',
         product_category: 'Electronic',
@@ -85,6 +85,18 @@ exports.getGatewayURL = functions.https.onCall(async (amount) => {
         "GatewayPageURL": apiResponse["GatewayPageURL"] 
     }
     // } )
+    sslcz.init(data).then( apiResponse => {
+        console.log('Redirecting to: ', apiResponse["GatewayPageURL"])
+    
+        res.send(
+            "GatewayPageURL" + apiResponse["GatewayPageURL"]
+        )
+
+    } )
+    // } catch(e) {
+        // console.log(e)
+    // }
+    // let GatewayPageURL = apiResponse
     
 })
 
@@ -114,6 +126,7 @@ app3.post("*", async (request, response) => {
     }
     
 })
+
 
 
 // not as clean, but a better endpoint to consume
