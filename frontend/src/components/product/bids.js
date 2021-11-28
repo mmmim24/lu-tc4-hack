@@ -11,7 +11,9 @@ export default props => {
     const userId = useStateValue()[0].user.uid;
     const [ bids, setBids ] = React.useState([]);
     const [ current_user_bid, set_current_user_bid ] = useState({
-        selected_bid: null,
+        selected_bid: {
+            bid: -1
+        },
         accepted: false
     });
     const [ current_user_owner, set_current_user_owner ] = useState(false);
@@ -27,31 +29,44 @@ export default props => {
                 .orderBy("bid", "desc")
                 .get()
             setBids(bidsSnap.docs.map( doc => ({...doc.data(), id: doc.id}) ))
-        }
-
-
-        if( !product.is_bidding_off && product.accepted_bid_id ) {
+        }else {
+            // if( product.is_bidding_off )
+            //     return;
             const selected_bid_snap = await db
                 .collection("products")
                 .doc(product.id)
                 .collection("bids")
-                .where('id', '==', product.accepted_bid_id)
+                .where('user', '==', userId)
                 .get()
-            const selected_bid = selected_bid_snap.docs[0].data()
-            if(selected_bid.user == product.user.id) {
+            if( selected_bid_snap.docs.length == 0 ) 
+                return;
+            const selected_bid = selected_bid_snap.docs[0].data();
+            console.log(selected_bid)
+            set_current_user_bid({
+                selected_bid: selected_bid,
+            })
+            if(product.accepted_bid_id && selected_bid.id == product.accepted_bid_id) {
                 set_current_user_bid({
                     selected_bid: selected_bid,
                     accepted: true
                 })
             }
         }
+
     },[] )
 
 
-    const onAccept = async bid_id => {
-
+    const acceptOffer = async () => {
+        await db.collection("users")
+            .doc( product.seller.id )
+            .collection("notifications")
+            .add({
+                title: "Sell offer Accepted by user",
+                message: `Your offer of selling ${product.title} at ${current_user_bid.selected_bid.bid} has been accepted by buyer`,
+                link: `/product/${product.id}`,
+                seen: false
+            })
     }
-
 
     const acceptBid = async bidId => {
 
@@ -62,35 +77,95 @@ export default props => {
                 is_bidding_off: true,
                 accepted_bid_id: bidId
             })  
+        
+        await db.collection("users")
+            .doc(bids.find( bid => bid.id == bidId ).user)
+            .collection("notifications")
+            .add({
+                title: "Bid Accepted",
+                message: `Your bid of ${bids.find( bid => bid.id == bidId ).bid} on ${product.title} has been accepted`,
+                link: `/product/${product.id}`,
+                seen: false
+            })
     }
 
     const turn_on_bidding = async () => {
+
+        if( product.accepted_bid_id ) {
+            await db.collection("users")
+                .doc(bids.find( bid => bid.id == product.accepted_bid_id ).user)
+                .collection("notifications")
+                .add({
+                    title: "Bid rejected",
+                    message: `Your bid of ${bids.find( bid => bid.id == product.accepted_bid_id ).bid} on ${product.title} has been rejected`,
+                    link: `/product/${product.id}`,
+                    seen: false
+                })
+        }
+
         await db.collection("products")
             .doc(product.id)
             .set({
                 ...product,
                 is_bidding_off: false,
+                accepted_bid_id: null   
+            })
+    }
+    
+    const turn_off_bidding = async () => {
+        await db.collection("products")
+            .doc(product.id)
+            .set({
+                ...product,
+                is_bidding_off: true,
                 accepted_bid_id: null
             })
     }
 
 
-    console.log("GGGG");
+    useEffect( async () => {
+        if( current_user_bid.selected_bid.bid == -1 )
+            return;
+        
+        if( !current_user_bid.selected_bid.id ) {
+            const bid = await db.collection("products")
+                .doc(product.id)
+                .collection("bids")
+                .add(current_user_bid.selected_bid)
+            console.log(bid.id);
+            set_current_user_bid({
+                ...current_user_bid,
+                selected_bid: {
+                    ...current_user_bid.selected_bid,
+                    id: bid.id
+                }
+            })
+        } else {
+            await db.collection("products")
+                .doc(product.id)
+                .collection("bids")
+                .doc(current_user_bid.selected_bid.id)
+                .update(current_user_bid.selected_bid)
+        }
+    }, [current_user_bid])
+
 
 
     return (
         current_user_bid.accepted ? 
-            <Button > Accept buy offer for { current_user_bid.selected_bid.bid } </Button>
+            <Button onClick={acceptOffer} > Accept buy offer for { current_user_bid.selected_bid.bid } </Button>
         : props.product.is_bidding_off ? (
             <div className='flex'>
             <div> Bidding is currently closed for this product </div>
             {current_user_owner ? <Button onClick={ turn_on_bidding }> Turn on bidding </Button> : <></>}
             </div>
         ): current_user_owner ?
+            <>
+            <Button onClick={turn_off_bidding} >Turn off bidding</Button>
             <Table
-                
+                dataSource={ bids }
             >
-                <Column title="Name" dataIndex={"name"} key="name" />
+                <Column title="Name" dataIndex={"user"} key="name" />
                 <Column title="Bid" dataIndex={"bid"} key="bid" />
                 <Column title="Actions" render={ (_, record) => {
                     return (
@@ -98,6 +173,20 @@ export default props => {
                     )
                 } }/>
             </Table>
-        : <div>You are a normal user</div>
+            </>
+        :   <div>
+                <div>
+                    { current_user_bid.selected_bid.bid == -1 ? "place" : "edit" } your bid
+                </div>
+                <input type="number" onBlur={e => set_current_user_bid({
+                    ...current_user_bid,
+                    selected_bid: {
+                        ...current_user_bid.selected_bid,
+                        user: userId,
+                        time: new Date(),
+                        bid: e.target.value
+                    }
+                })} />
+            </div>
     )
 }
