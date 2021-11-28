@@ -49,16 +49,17 @@ export default (props) => {
 				.collection("products")
 				.doc(product.id)
 				.collection("bids")
-				.where("user", "==", userId)
+				.where("user", "==", user.id)
 				.get();
 			if (selected_bid_snap.docs.length == 0) return;
-			const selected_bid = selected_bid_snap.docs[0].data();
+			const selected_bid = {
+				...selected_bid_snap.docs[0].data(),
+				id: selected_bid_snap.docs[0].id,
+			};
 			console.log(selected_bid);
+			console.log(product);
 			set_current_user_bid({
-				selected_bid: {
-					...selected_bid,
-					id: selected_bid_snap.docs[0].id
-				},
+				selected_bid: selected_bid,
 			});
 			// console.log(current_user_bid.selected_bid);
 			// console.log(product.accepted_bid_id);
@@ -67,10 +68,7 @@ export default (props) => {
 				selected_bid.id == product.accepted_bid_id
 			) {
 				set_current_user_bid({
-					selected_bid: {
-						...selected_bid,
-						id: selected_bid_snap.docs[0].id
-					},
+					selected_bid: selected_bid,
 					accepted: true,
 				});
 			}
