@@ -76,13 +76,13 @@ const Layout = ({ children }) => {
 								Profile
 							</div>
 							<hr />
-							<div
+							{/* <div
 								className='cursor-pointer'
 								onClick={() => navigate("/profile/settings")}
 							>
 								Deposit
-							</div>
-							<hr />
+							</div> */}
+							{/* <hr /> */}
 							<div className='cursor-pointer' onClick={handleSignOut}>
 								Sign Out
 							</div>

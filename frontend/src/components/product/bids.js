@@ -161,28 +161,29 @@ export default (props) => {
 			Accept buy offer for {current_user_bid.selected_bid.bid}{" "}
 		</Button>
 	) : props.product.is_bidding_off ? (
-		<div className='flex'>
-			<div> Bidding is currently closed for this product </div>
+		<div className='flex mt-4 items-center justify-center flex-col gap-5'>
+			<div > Bidding is currently closed for this product </div>
+			<br/>
 			{current_user_owner ? (
-				<Button onClick={turn_on_bidding}> Turn on bidding </Button>
+				<Button type="primary" onClick={turn_on_bidding}> Turn on bidding </Button>
 			) : (
 				<></>
 			)}
 		</div>
 	) : current_user_owner ? (
-		<>
-			<Button onClick={turn_off_bidding}>Turn off bidding</Button>
-			<Table dataSource={bids}>
+		<div className="flex flex-col items-center justify-center">
+			<Button type="danger" className="rounded-full my-4 py-1 w-1/4" onClick={turn_off_bidding}>Turn off bidding</Button>
+			<Table className="w-full" dataSource={bids}>
 				<Column title='Name' dataIndex={"user"} key='name' />
 				<Column title='Bid' dataIndex={"bid"} key='bid' />
 				<Column
 					title='Actions'
 					render={(_, record) => {
-						return <button onClick={() => acceptBid(record.id)}>Accept</button>;
+						return <Button className="rounded" type="primary" onClick={() => acceptBid(record.id)}>Accept</Button>;
 					}}
 				/>
 			</Table>
-		</>
+		</div>
 	) : (
 		<div>
 			<div>
