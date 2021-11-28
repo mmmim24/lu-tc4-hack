@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Products from "./pages/products";
 import Product from "./pages/product";
+import AddProduct from './pages/add_product'
 import { useStateValue } from "./state/stateprovider";
 import Loader from "./utils/Loader";
 
@@ -38,6 +39,7 @@ function App() {
 							<Route exact path='/profile/view/:id' element={<Profile />} />
 							<Route exact path='/products' element={<Products />} />
 							<Route exact path='/product/:id' element={<Product />} />
+							<Route exact path='/product/add' element={<AddProduct />} />
 							<Route
 								path='*'
 								element={user ? <NotFound /> : <Navigate to='/login' />}
