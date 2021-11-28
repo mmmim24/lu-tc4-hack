@@ -51,6 +51,8 @@ export default () => {
                                 ...values,
                                 images: fileList.map( file => file.url ),
                                 user: userId,
+                                sold: false,
+                                is_bidding_off: false,
                             })
                             console.log(productRef)
                         } }

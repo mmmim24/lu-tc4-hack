@@ -63,3 +63,17 @@ code {
 	top: 60px;
 	right: 20px;
 }
+
+.scroll {
+	overflow-y: scroll;
+	height: 200px;
+}
+
+.scroll::-webkit-scrollbar {
+	width: 0; /* Remove scrollbar space */
+	background: transparent; /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+.scroll::-webkit-scrollbar-thumb {
+	background: #ff0000;
+}

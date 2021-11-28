@@ -5,7 +5,7 @@ import {
 	UserOutlined,
 	YoutubeOutlined,
 } from "@ant-design/icons";
-import { Avatar } from "antd";
+import { Avatar, Button } from "antd";
 import React from "react";
 import { Navigate } from "react-router";
 import { auth } from "../firebase";
@@ -39,7 +39,9 @@ const Layout = ({ children }) => {
 					<div className='flex items-center gap-12'>
 						<div>Home</div>
 						<div>Categories</div>
-						<div>Best Deals</div>
+						<Button type='primary' onClick={() => navigate("/product/add")}>
+							Post a Deal
+						</Button>
 						<div>
 							<NoticeBoard />
 						</div>
