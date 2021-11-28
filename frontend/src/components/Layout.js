@@ -10,7 +10,7 @@ import React from "react";
 import { Navigate } from "react-router";
 import { auth } from "../firebase";
 import { useStateValue } from "../state/stateprovider";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "./img/deal-logo-white.png";
 import NoticeBoard from "./NoticeBoard";
 
@@ -34,11 +34,18 @@ const Layout = ({ children }) => {
 			<div className='bg-primary'>
 				<div className='px-12 py-2 flex items-center justify-between text-white'>
 					<div>
-						<img src={logo} alt='deal.com' height='70px' width='70px' />
+						<img
+							onClick={() => navigate("/home")}
+							src={logo}
+							alt='deal.com'
+							height='70px'
+							width='70px'
+							className='cursor-pointer'
+						/>
 					</div>
 					<div className='flex items-center gap-12'>
-						<div>Home</div>
-						<div>Categories</div>
+						<Link to='/home'>Home</Link>
+						{/* <div>Categories</div> */}
 						<Button type='primary' onClick={() => navigate("/product/add")}>
 							Post a Deal
 						</Button>
@@ -54,13 +61,26 @@ const Layout = ({ children }) => {
 						<div
 							className={`${
 								show ? "flex" : "hidden"
-							} flex-col gap-2 bg-white text-black shadow px-2 py-2 border-1 rounded profile_nav`}
+							} flex-col gap-2 bg-white text-black shadow px-8 py-4 border-1 rounded profile_nav`}
 						>
+							<div className='text-primary text-xs'>
+								<span className='text-xl'>
+									{parseFloat(user?.deposit).toFixed(2)}
+								</span>{" "}
+								BDT
+							</div>
 							<div
 								className='cursor-pointer'
 								onClick={() => navigate("/profile/settings")}
 							>
 								Profile
+							</div>
+							<hr />
+							<div
+								className='cursor-pointer'
+								onClick={() => navigate("/profile/settings")}
+							>
+								Deposit
 							</div>
 							<hr />
 							<div className='cursor-pointer' onClick={handleSignOut}>

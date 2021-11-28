@@ -56,6 +56,7 @@ const NoticeBoard = () => {
 						top: "20px",
 						right: "10%",
 						width: "30%",
+						zIndex: 1000000,
 					}}
 					className='rounded flex min-w-max bg-white text-black shadow px-4 py-4 mt-3'
 				>

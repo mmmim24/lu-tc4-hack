@@ -75,7 +75,7 @@ const RegisterForm = ({ setUserValid }) => {
 							action({
 								type: "SET_USER",
 								payload: {
-									user: user,
+									user: snapshot.data(),
 								},
 							});
 							navigate("/home");
@@ -100,7 +100,7 @@ const RegisterForm = ({ setUserValid }) => {
 									action({
 										type: "SET_USER",
 										payload: {
-											user: user,
+											user: data,
 										},
 									});
 									navigate("/home");
