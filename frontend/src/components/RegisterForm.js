@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import { Select, Button, Input, message } from "antd";
 import React, { useEffect } from "react";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import firebase from "firebase";
 import { useStateValue } from "../state/stateprovider";
 import { useNavigate } from "react-router";
@@ -65,14 +65,57 @@ const RegisterForm = ({ setUserValid }) => {
 			.then((result) => {
 				// User signed in successfully.
 				const user = result.user;
+
+				db.collection("users")
+					.doc(user.uid)
+					.get()
+					.then((snapshot) => {
+						if (snapshot.exists) {
+							message.success("Welcome back!");
+							action({
+								type: "SET_USER",
+								payload: {
+									user: user,
+								},
+							});
+							navigate("/home");
+						} else {
+							const data = {
+								id: user.uid,
+								name: user.displayName,
+								points: 0,
+								verified: false,
+								deposit: 0,
+								suspended: false,
+								avatar: null,
+								address: null,
+								city: null,
+								premium: false,
+							};
+							db.collection("users")
+								.doc(user.uid)
+								.set(data)
+								.then(() => {
+									message.success("Successfully registered");
+									action({
+										type: "SET_USER",
+										payload: {
+											user: user,
+										},
+									});
+									navigate("/home");
+								})
+								.catch((error) => {
+									console.log(error);
+									message.error("Something went wrong");
+								});
+						}
+					})
+					.catch((error) => {
+						console.log("error");
+					});
+				console.log(user);
 				// ...
-				action({
-					type: "SET_USER",
-					payload: {
-						user: user,
-					},
-				});
-				navigate("/home");
 			})
 			.catch((error) => {
 				// User couldn't sign in (bad verification code?)

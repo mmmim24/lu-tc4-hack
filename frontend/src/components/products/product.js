@@ -4,12 +4,12 @@ import productImg from '../../static/dokkaebi.png'
 
 export default ( props ) => {
 	
-    const {title, seller, id} = props.product;
+    const {title, user:seller, id, category, description, images, minimum_bid} = props.product;
     
     return (
         <Link to={`/product/${id}`} className="border border-black rounded-xl shadow-xl p-4 flex flex-col hover:border-4">
             <div className="w-full">
-                <img src={productImg} alt="product" className=" rounded-xl" />
+                <img src={images[0]} alt="product" className=" rounded-xl" />
             </div>
             <div className="my-4 w-full flex flex-col justify-between">
                 <div className="text-lg my-4">  

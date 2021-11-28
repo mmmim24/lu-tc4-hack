@@ -5,8 +5,9 @@ import productImg from '../static/dokkaebi.png'
 import { Field, Formik, Form } from "formik"; 
 import { Upload, Button, Progress, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { storage } from "../firebase";
+import { storage, db } from "../firebase";
 import firebase from "firebase";
+import { useStateValue } from "../state/stateprovider";
 
 
 export default () => {
@@ -18,12 +19,18 @@ export default () => {
     // user can drop the product at our warehouse or request us to collect it from  him/her
     // fremium user posts will expire within 5days premium users posts will expire within 1 year
 
+    const userId = useStateValue()[0].user.uid;
+
+    // window.user = user[0];
+
     const [uploadState, setUploadState] = React.useState({
         UploadStart: false,
         uploadProgress: 0,
         uploadError: false,
         uploadFileUrl: ""
     })  
+
+    const [ fileList, setFileList ] = React.useState([])
 
     return (
         <Layout>
@@ -35,10 +42,17 @@ export default () => {
                             title: '',
                             description: '',
                             minimum_bid: '',
+                            category: '',
                             images: [],
                         }}
-                        onSubmit={ values => {
+                        onSubmit={ async values => {
                             console.log(values)
+                            const productRef = await db.collection('products').add({
+                                ...values,
+                                images: fileList.map( file => file.url ),
+                                user: userId,
+                            })
+                            console.log(productRef)
                         } }
                     >
                         <Form>
@@ -49,10 +63,17 @@ export default () => {
                             <Field type="textarea" name="description" form="product_add_form" className="px-4 py-2 row-start-2 col-span-2 border border-black rounded-lg" />
                             <div className="row-start-3 col-span-1 text-lg">Minimum Bid</div>
                             <Field type="number" name="minimum_bid" className="px-4 py-2 row-start-3 col-span-2 border border-black rounded-lg" />
-                            <div className="row-start-4 col-span-1 text-lg">Product Images</div>
-                            <div className="row-start-4 col-span-2" >
+                            <div className="row-start-4 col-span-1 text-lg">Categories</div>
+                            <Field as="select" name="category" className="px-4 py-2 row-start-4 col-span-2 border border-black rounded-lg" >
+                                <option>Electronics</option>
+                                <option>Cosmetics</option>
+                                <option>Clothing</option>
+                            </Field>
+                            <div className="row-start-5 col-span-1 text-lg">Product Images</div>
+                            <div className="row-start-5 col-span-2" >
                             <Upload
                                 name="file"
+                                fileList={fileList}
                                 // eslint-disable-next-line no-undef
                                 customRequest={data => {
 
@@ -89,7 +110,16 @@ export default () => {
                                                     uploadFileUrl: downloadURL,
                                                     UploadSuccess: true,
                                                     uploadStart: false,
-                                                });    
+                                                });  
+                                                console.log(downloadURL);  
+                                                setFileList([...fileList, {
+                                                    uid: fileList.length+1,
+                                                    name: "Image " + (fileList.length+1),
+                                                    status: "done",
+                                                    url: downloadURL,
+                                                    thumbUrl: downloadURL
+                                                }])
+                                                console.log(fileList);  
                                             });
                                         }
                                     );
@@ -99,13 +129,13 @@ export default () => {
                                     <Button>
                                         <UploadOutlined /> Click to Upload
                                     </Button>
-                                    {uploadState.uploadStart && (
+                                    { (uploadState.uploadStart || uploadState.UploadSuccess) && (
                                         <Progress type="line" percent={uploadState.uploadProgress} />
                                     )}
                                     {uploadState.uploadError && message.error('an error occured')}
                                 </Upload>
                             </div>
-                            <button className="row-start-5 py-2 rounded-lg" type="submit" >submit</button>
+                            <button className="row-start-6 py-2 rounded-lg" type="submit" >submit</button>
                         </div>
                         </Form>
                     </Formik>

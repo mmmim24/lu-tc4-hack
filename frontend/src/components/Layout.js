@@ -2,15 +2,21 @@ import {
 	FacebookOutlined,
 	InstagramOutlined,
 	TwitterOutlined,
+	UserOutlined,
 	YoutubeOutlined,
 } from "@ant-design/icons";
+import { Avatar } from "antd";
 import React from "react";
 import { Navigate } from "react-router";
 import { auth } from "../firebase";
 import { useStateValue } from "../state/stateprovider";
+import { useNavigate } from "react-router-dom";
 
 const Layout = ({ children }) => {
 	const [{ user }, action] = useStateValue();
+	const [show, setShow] = React.useState(false);
+	const navigate = useNavigate();
+
 	const handleSignOut = () => {
 		auth.signOut();
 		action({
@@ -19,7 +25,7 @@ const Layout = ({ children }) => {
 				user: null,
 			},
 		});
-		Navigate("/register");
+		// Navigate("/register");
 	};
 	return (
 		<div>
@@ -29,11 +35,32 @@ const Layout = ({ children }) => {
 						<div>DEAL</div>
 						<div>.COM</div>
 					</div>
-					<div className='flex gap-12'>
+					<div className='flex items-center gap-12'>
 						<div>Home</div>
 						<div>Categories</div>
 						<div>Best Deals</div>
-						<div onClick={handleSignOut}>Sign Out</div>
+						<Avatar
+							className='cursor-pointer'
+							onClick={() => setShow(!show)}
+							icon={<UserOutlined />}
+						/>
+						<div
+							className={`${
+								show ? "flex" : "hidden"
+							} flex-col gap-2 bg-white text-black shadow px-2 py-2 border-1 rounded profile_nav`}
+						>
+							<div
+								className='cursor-pointer'
+								onClick={() => navigate("/profile/settings")}
+							>
+								Profile
+							</div>
+							<hr />
+							<div className='cursor-pointer' onClick={handleSignOut}>
+								Sign Out
+							</div>
+							{/* <div onClick={handleSignOut}>Sign Out</div> */}
+						</div>
 					</div>
 				</div>
 			</div>
