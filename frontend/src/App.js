@@ -17,18 +17,28 @@ function App() {
 	const [{ user }, action] = useStateValue();
 	console.log(auth.currentUser);
 	useEffect(() => {
-		auth.onAuthStateChanged(async (u) => {
-			if (u) {
-				const doc = await db.collection("users").where("id", "==", u.uid).get();
+		const fetch = async () => {
+			setLoading(true);
+			auth.onAuthStateChanged(async (u) => {
+				if (u) {
+					const doc = await db
+						.collection("users")
+						.where("id", "==", u.uid)
+						.get();
 
-				action({
-					type: "SET_USER",
-					payload: {
-						user: doc.docs[0].data(),
-					},
-				});
-			}
-		});
+					action({
+						type: "SET_USER",
+						payload: {
+							user: doc.docs[0].data(),
+						},
+					});
+					setLoading(false);
+				} else {
+					setLoading(false);
+				}
+			});
+		};
+		fetch();
 	}, []);
 
 	return (

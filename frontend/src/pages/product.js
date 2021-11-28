@@ -3,7 +3,7 @@ import Product from "../components/products/product";
 import React, { useEffect } from "react";
 import productImg from "../static/dokkaebi.png";
 import { Carousel } from "antd";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { db } from "../firebase";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useStateValue } from "../state/stateprovider";
@@ -76,6 +76,14 @@ const Home = () => {
 								{" "}
 								{product?.description}{" "}
 							</div>
+							<div>
+								By{" "}
+								<Link to={`/profile/view/${product.seller.id}`}>
+									{" "}
+									{product.seller.name}{" "}
+								</Link>
+							</div>
+							<div>Address: {product.seller.address} </div>
 						</div>
 					</div>
 				</div>

@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
 				user: null,
 			},
 		});
-		// Navigate("/register");
+		navigate("/register");
 	};
 	return (
 		<div>
