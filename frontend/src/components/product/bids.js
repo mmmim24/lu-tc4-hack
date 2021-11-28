@@ -56,17 +56,26 @@ export default (props) => {
 	}, []);
 
 	const acceptOffer = async () => {
-		
-		// await db
-		// 	.collection("users")
-		// 	.doc(product.seller.id)
-		// 	.collection("notifications")
-		// 	.add({
-		// 		title: "Sell offer Accepted by user",
-		// 		message: `Your offer of selling ${product.title} at ${current_user_bid.selected_bid.bid} has been accepted by buyer`,
-		// 		link: `/product/${product.id}`,
-		// 		seen: false,
-		// 	});
+		if (parseFloat(user.deposit) - parseFloat(current_user_bid.selected_bid.bid)  < 0) {
+			message.error("You don't have enough money to accept this offer");
+			return;
+		}
+
+		await db.collection("users").doc(user.id).update({
+			deposit: parseFloat(user.deposit) - parseFloat(current_user_bid.selected_bid.bid),
+		})
+		console.log(current_user_bid.selected_bid.bid);
+		message.success("Purchase Successful");
+		await db
+			.collection("users")
+			.doc(product.seller.id)
+			.collection("notifications")
+			.add({
+				title: "Sell offer Accepted by user",
+				message: `Your offer of selling ${product.title} at ${current_user_bid.selected_bid.bid} has been accepted by buyer`,
+				link: `/product/${product.id}`,
+				seen: false,
+			});
 	};
 
 	const acceptBid = async (bidId) => {
@@ -168,7 +177,7 @@ export default (props) => {
 	return current_user_bid.accepted ? (
 		<Button onClick={acceptOffer}>
 			{" "}
-			Accept buy offer for {current_user_bid.selected_bid.bid}{" "}
+			Buy Now for {current_user_bid.selected_bid.bid}{" "}
 		</Button>
 	) : props.product.is_bidding_off ? (
 		<div className='flex mt-4 items-center justify-center flex-col gap-5'>
