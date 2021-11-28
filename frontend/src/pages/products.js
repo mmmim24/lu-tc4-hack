@@ -2,6 +2,7 @@ import Layout from "../components/Layout";
 import Product from '../components/products/product'
 import React, { useEffect } from "react";
 import { db } from "../firebase";
+import { functions } from "../firebase";
 
 const Home = () => {
 
@@ -20,6 +21,9 @@ const Home = () => {
             }
         }))
         setProducts(productsArray)
+
+        functions.getGatewayURL();
+
         console.log(productsArray)
     }, [] )
 
