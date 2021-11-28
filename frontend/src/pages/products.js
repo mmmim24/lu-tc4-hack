@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { db } from "../firebase";
 import { Button, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { getGatewayURL } from "../utils/payment";
 
 const Home = () => {
 	const [allProducts, setAllProducts] = React.useState([]);
@@ -31,7 +32,7 @@ const Home = () => {
 		);
 		setAllProducts(productsArray);
 		setProducts(productsArray);
-		console.log(productsArray);
+		
 	}, []);
 
 	const handleSearch = (e) => {

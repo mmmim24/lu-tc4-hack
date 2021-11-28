@@ -9,6 +9,7 @@ import Products from "./pages/products";
 import Product from "./pages/product";
 import AddProduct from "./pages/add_product";
 import Settings from "./pages/Settings";
+import Test from './pages/test'
 import { useStateValue } from "./state/stateprovider";
 import Loader from "./utils/Loader";
 
@@ -44,6 +45,7 @@ function App() {
 							<Route exact path='/home' element={<Products />} />
 							<Route exact path='/product/:id' element={<Product />} />
 							<Route exact path='/product/add' element={<AddProduct />} />
+							<Route exact path='/test' element={<Test />} />
 							{/* <Route path='*' element={<Navigate to='/home' />} /> */}
 						</Routes>
 					) : (

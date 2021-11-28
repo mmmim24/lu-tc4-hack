@@ -15,38 +15,35 @@ const firebaseConfig = {
 };
 
 
-admin.initializeApp(functions.config().firebase)
+admin.initializeApp(firebaseConfig)
 
 /* Express with CORS & automatic trailing '/' solution */
 const app3 = express()
-app3.use(cors({ origin: true }))
+// app3.use(cors({ origin: true }))
 
 
 const SSLCommerzPayment = require('sslcommerz-lts');
-const { response } = require("express");
-const { db } = require("../src/firebase");
-// 'store_id': 'milit612a94857784c', 
-//     'store_pass': 'milit612a94857784c@ssl', 
+const { app } = require("firebase-admin");
     
 const store_id = 'milit612a94857784c'
 const store_passwd = 'milit612a94857784c@ssl'
 const is_live = false //true for live, false for sandbox
 
-const port = 3030
-
 //sslcommerz init
+// app3.get('/init', async (req, res) => {
 app3.get('/init', async (req, res) => {
     
     const tran_id = Math.random()*10000000000000000;
+    const amount = 100;
 
     const data = {
-        total_amount: 100,
+        total_amount: amount,
         currency: 'BDT',
         tran_id: tran_id, // use unique tran_id for each api call
         success_url: 'http://localhost:3030/success?tran_id'+tran_id,
         fail_url: 'http://localhost:3030/fail?tran_id'+tran_id,
         cancel_url: 'http://localhost:3030/cancel?tran_id'+tran_id,
-        ipn_url: 'http://localhost:5002/practice-management-system/us-central1/api3',
+        ipn_url: 'http://pretty-grasshopper-26.loca.lt/practice-management-system/us-central1/api3',
         shipping_method: 'Courier',
         product_name: 'Computer.',
         product_category: 'Electronic',
@@ -71,21 +68,34 @@ app3.get('/init', async (req, res) => {
     };
 
     const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live)
-    let apiResponse;
     // try {
-    sslcz.init(data).then( apiResponse => {
-        console.log('Redirecting to: ', apiResponse["GatewayPageURL"])
+    // sslcz.init(data).then( apiResponse => {
+    //     console.log('Redirecting to: ', apiResponse["GatewayPageURL"])
     
-        res.send(
-            "GatewayPageURL" + apiResponse["GatewayPageURL"]
-        )
+    //     res.send(
+    //         "GatewayPageURL" + apiResponse["GatewayPageURL"]
+    //     )
 
-    } )
+    // } )
     // } catch(e) {
         // console.log(e)
     // }
     // let GatewayPageURL = apiResponse
     
+    const apiResponse = await sslcz.init(data)
+    console.log('Redirecting to: ', apiResponse["GatewayPageURL"])
+
+    const db = admin.firestore();
+    await db.collection("transactions").doc(tran_id.toString()).set({
+        tran_id: tran_id,
+        amount: amount
+    })
+
+    res.send({
+        "tran_id": tran_id,
+        "GatewayPageURL": apiResponse["GatewayPageURL"]
+    })
+
 })
 
 
@@ -97,22 +107,18 @@ app3.post("*", async (request, response) => {
     const amount = request.body.amount;
     const db = admin.firestore();
 
-    const tranSnap = await db.collection("transactions")
-        .where("tran_id", "==", tran_id)
-        .get()
 
-    if( tranSnap.docs.length == 1 && tranSnap.docs[0].data().amount == amount ) {
-        db.collection("transactions")
-        .where("tran_id", "==", tran_id)
-        .get()
-        .then( docs => {
-            db.collection("transactions")
-            .doc(docs.docs[0].id)
+    const tranRef = await db.collection("transactions").doc(tran_id).get()
+
+
+    if( tranRef.exists && tranRef.data().amount == amount ) {
+        await db.collection("transactions")
+            .doc(tran_id)
             .update({
                 status: "success",
             })
-        } )
     }
+
     
 })
 
