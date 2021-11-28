@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { db } from "../firebase";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useStateValue } from "../state/stateprovider";
+import Bids from '../components/product/bids'
 
 const Home = () => {
     
@@ -24,13 +25,27 @@ const Home = () => {
     useEffect( async () => {
         const productSnap = await db.collection("products").doc(id).get()
         const product = productSnap.data()
+        console.log(productSnap.id);
         setProduct({
             id: productSnap.id,
             ... product,
             seller: (await db.collection("users").doc(product.user).get()).data()
         })
+        
+        db.collection("products")
+            .doc(id)
+            .onSnapshot(async snap => {
+                setProduct({
+                    id: snap.id,
+                    ... snap.data(),
+                    seller: (await db.collection("users").doc(snap.data().user).get()).data()
+                })
+            })
+    
     },[] )
 
+
+    
 
 
     return (
@@ -42,7 +57,7 @@ const Home = () => {
                         <img src={product.images[0]} style={{maxHeight: '20rem'}} alt="product" className=" rounded-xl" />
                     </div>
                     <div className="">
-                        
+                        <Bids product={product} />
                     </div>
                 </div>
                 <div className="col-span-1">
