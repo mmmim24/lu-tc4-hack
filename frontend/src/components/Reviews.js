@@ -6,8 +6,9 @@ const Reviews = () => {
     const [allReviews, setAllReviews] = useState([])
     const [{user}] = useStateValue()
     useEffect(() => {
+        const userId = window.location.pathname.split("/")[3];
         const fetchData = async () => {
-            const snap = await db.collection("users").doc(user.id).collection("reviews").get()
+            const snap = await db.collection("users").doc(userId).collection("reviews").get()
             const temp = []
             snap.docs.map(s => temp.push(s.data()))
             setAllReviews(temp)
