@@ -30,17 +30,18 @@ export default (props) => {
 				.doc(product.id)
 				.collection("bids")
 				.orderBy("bid", "desc")
-				.get();
-			const bids = await Promise.all(
-				bidsSnap.docs.map(async (doc) => ({
-					id: doc.id,
-					...doc.data(),
-					username: (
-						await db.collection("users").doc(doc.data().user).get()
-					).data().name,
-				}))
-			);
-			setBids(bids);
+				.onSnapshot(async (bidsSnap) => {
+					const bids = await Promise.all(
+						bidsSnap.docs.map(async (doc) => ({
+							id: doc.id,
+							...doc.data(),
+							username: (
+								await db.collection("users").doc(doc.data().user).get()
+							).data().name,
+						}))
+					);
+					setBids(bids);
+				});
 		} else {
 			// if( product.is_bidding_off )
 			//     return;
@@ -85,13 +86,11 @@ export default (props) => {
 					parseFloat(user.deposit) -
 					parseFloat(current_user_bid.selected_bid.bid),
 			});
-		await db
-			.collection("orders")
-			.add({
-				sellerId: product.seller.id,
-				buyerId: user.id,
-				productId: product.id 
-			})
+		await db.collection("orders").add({
+			sellerId: product.seller.id,
+			buyerId: user.id,
+			productId: product.id,
+		});
 		console.log(current_user_bid.selected_bid.bid);
 		message.success("Purchase Successful");
 		await db
@@ -223,8 +222,18 @@ export default (props) => {
 		fetchAll();
 	}, [user]);
 
+	const handleDelete = async (bidId) => {
+		await db
+			.collection("products")
+			.doc(product.id)
+			.collection("bids")
+			.doc(bidId)
+			.delete();
+		message.success("Bid Deleted");
+	};
+
 	return current_user_bid.accepted ? (
-		<Button className="mt-8" onClick={acceptOffer}>
+		<Button className='mt-8' onClick={acceptOffer}>
 			{" "}
 			Buy Now for {current_user_bid.selected_bid.bid}{" "}
 		</Button>
@@ -264,13 +273,24 @@ export default (props) => {
 					title='Actions'
 					render={(_, record) => {
 						return (
-							<Button
-								className='rounded'
-								type='primary'
-								onClick={() => acceptBid(record.id)}
-							>
-								Accept
-							</Button>
+							<div className='flex gap-4'>
+								<Button
+									className='rounded'
+									type='primary'
+									onClick={() => acceptBid(record.id)}
+								>
+									Accept
+								</Button>
+								{user?.premium && (
+									<Button
+										className='rounded'
+										type='danger'
+										onClick={() => handleDelete(record.id)}
+									>
+										Reject
+									</Button>
+								)}
+							</div>
 						);
 					}}
 				/>
@@ -279,10 +299,11 @@ export default (props) => {
 	) : (
 		<div className='flex mt-8 flex-col justify-center items-center gap-5'>
 			<div>
-				{ current_user_bid.selected_bid.bid != -1
-				&& <h1> your current bid is { current_user_bid.selected_bid.bid } </h1>}
+				{current_user_bid.selected_bid.bid != -1 && (
+					<h1> your current bid is {current_user_bid.selected_bid.bid} </h1>
+				)}
 				{current_user_bid.selected_bid.bid == -1 ? "Submit" : "Re-Submit"} your
-				bid. minimum bid is { product.minimum_bid }
+				bid. minimum bid is {product.minimum_bid}
 			</div>
 			{user?.premium && lowRange && highRange && (
 				<div className='flex p-2 rounded gap-2 bg-primary text-white items-center'>

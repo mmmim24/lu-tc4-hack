@@ -9,7 +9,7 @@ import Products from "./pages/products";
 import Product from "./pages/product";
 import AddProduct from "./pages/add_product";
 import Settings from "./pages/Settings";
-import Test from './pages/test'
+import Test from "./pages/test";
 import { useStateValue } from "./state/stateprovider";
 import Loader from "./utils/Loader";
 
@@ -22,15 +22,11 @@ function App() {
 			setLoading(true);
 			auth.onAuthStateChanged(async (u) => {
 				if (u) {
-					const doc = await db
-						.collection("users")
-						.where("id", "==", u.uid)
-						.get();
-
+					const doc = await db.collection("users").doc(u.uid).get();
 					action({
 						type: "SET_USER",
 						payload: {
-							user: doc.docs[0].data(),
+							user: doc.data(),
 						},
 					});
 					setLoading(false);
