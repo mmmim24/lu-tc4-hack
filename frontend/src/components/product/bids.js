@@ -1,4 +1,4 @@
-import { Button, Table } from "antd";
+import { Button, Input, message, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { useStateValue } from "../../state/stateprovider";
 import { auth, db } from "../../firebase";
@@ -16,6 +16,7 @@ export default (props) => {
 		accepted: false,
 	});
 	const [current_user_owner, set_current_user_owner] = useState(false);
+	const [{user}] = useStateValue();
 
 	useEffect(async () => {
 		if (product.seller.id == userId) {
@@ -55,16 +56,17 @@ export default (props) => {
 	}, []);
 
 	const acceptOffer = async () => {
-		await db
-			.collection("users")
-			.doc(product.seller.id)
-			.collection("notifications")
-			.add({
-				title: "Sell offer Accepted by user",
-				message: `Your offer of selling ${product.title} at ${current_user_bid.selected_bid.bid} has been accepted by buyer`,
-				link: `/product/${product.id}`,
-				seen: false,
-			});
+		
+		// await db
+		// 	.collection("users")
+		// 	.doc(product.seller.id)
+		// 	.collection("notifications")
+		// 	.add({
+		// 		title: "Sell offer Accepted by user",
+		// 		message: `Your offer of selling ${product.title} at ${current_user_bid.selected_bid.bid} has been accepted by buyer`,
+		// 		link: `/product/${product.id}`,
+		// 		seen: false,
+		// 	});
 	};
 
 	const acceptBid = async (bidId) => {
@@ -128,7 +130,7 @@ export default (props) => {
 			});
 	};
 
-	useEffect(async () => {
+	const handleSubmit = async (e) => {
 		if (current_user_bid.selected_bid.bid == -1) return;
 
 		if (!current_user_bid.selected_bid.id) {
@@ -145,6 +147,7 @@ export default (props) => {
 					id: bid.id,
 				},
 			});
+			message.success("Bid Updated");
 		} else {
 			await db
 				.collection("products")
@@ -152,8 +155,15 @@ export default (props) => {
 				.collection("bids")
 				.doc(current_user_bid.selected_bid.id)
 				.update(current_user_bid.selected_bid);
+
+			message.success("Bid Added");
 		}
-	}, [current_user_bid]);
+	}
+
+
+	// useEffect(async () => {
+		
+	// }, [current_user_bid]);
 
 	return current_user_bid.accepted ? (
 		<Button onClick={acceptOffer}>
@@ -185,13 +195,14 @@ export default (props) => {
 			</Table>
 		</div>
 	) : (
-		<div>
+		<div className="flex flex-col justify-center items-center gap-5">
 			<div>
-				{current_user_bid.selected_bid.bid == -1 ? "place" : "edit"} your bid
+				{current_user_bid.selected_bid.bid == -1 ? "Submit" : "Re-Submit"} your bid
 			</div>
-			<input
+			<Input
+				className="w-1/4"
 				type='number'
-				onBlur={(e) =>
+				onChange={(e) => {
 					set_current_user_bid({
 						...current_user_bid,
 						selected_bid: {
@@ -201,8 +212,9 @@ export default (props) => {
 							bid: e.target.value,
 						},
 					})
-				}
+				}}
 			/>
+			<Button onClick={ handleSubmit} type="primary" >Confirm</Button>
 		</div>
 	);
 };
