@@ -3,7 +3,7 @@
   
 >./frontend
   
-`npm build cstart`
+`npm run cstart`
   
 ## for payment gateway
   
